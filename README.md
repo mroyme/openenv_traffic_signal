@@ -1,5 +1,5 @@
 ---
-title: TrafficSignalEnv
+title: Traffic Signal Environment Server 
 emoji: "🚦"
 colorFrom: blue
 colorTo: green
