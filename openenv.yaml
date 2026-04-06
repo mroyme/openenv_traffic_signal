@@ -1,0 +1,56 @@
+spec_version: 1
+name: openenv-traffic-signal
+type: space
+runtime: fastapi
+app: server.app:app
+port: 8000
+version: "1.0.0"
+description: >
+  Cooperative multi-agent RL environment for adaptive traffic signal control.
+  9 intersections in a 3x3 grid, each controlled by an independent agent.
+  Agents learn emergent green wave coordination through shared reward signals.
+  Three tasks: corridor coordination, grid coordination, emergency response.
+  Real-world application: reducing urban congestion and emergency response times.
+author: mroyme
+tags:
+  - openenv
+  - traffic
+  - multi-agent
+  - cooperative-rl
+  - urban
+  - transportation
+license: apache-2.0
+tasks:
+  - id: corridor_coordination
+    difficulty: easy
+    description: 3 intersections in a line learning green wave coordination
+    max_steps: 150
+    score_range: [0.0, 1.0]
+  - id: grid_coordination
+    difficulty: medium
+    description: 9-intersection 3x3 grid with balanced traffic from all directions
+    max_steps: 200
+    score_range: [0.0, 1.0]
+  - id: emergency_response
+    difficulty: hard
+    description: 9-intersection grid with emergency vehicle requiring preemptive path clearing
+    max_steps: 200
+    score_range: [0.0, 1.0]
+observation_space:
+  type: structured
+  fields:
+    - name: agents
+      type: list[IntersectionObservation]
+      description: Per-agent state including queue lengths, phase, and neighbor queues
+    - name: global_wait_time
+      type: float
+      description: Mean vehicle wait time across all active intersections
+    - name: emergency_vehicle
+      type: EmergencyVehicleState
+      description: Emergency vehicle position and destination (Task 3 only)
+action_space:
+  type: structured
+  fields:
+    - name: agent_actions
+      type: list[AgentAction]
+      description: One action per active agent. Each action is keep or switch current phase.

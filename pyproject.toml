@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openenv-traffic-signal"
+version = "0.1.0"
+description = "Cooperative multi-agent RL environment for adaptive traffic signal control"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "openenv-core[core]>=0.2.3",
+    "fastapi>=0.135.3",
+    "numpy>=2.4.4",
+    "openai>=2.30.0",
+    "pydantic>=2.12.5",
+    "python-dotenv>=1.2.2",
+    "uvicorn>=0.43.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.9.0",
+    "ty>=0.0.1a6",
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[tool.ty.environment]
+python = ".venv"
+extra-paths = ["."]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["simulator*", "server*", "graders*"]
