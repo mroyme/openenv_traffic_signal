@@ -25,3 +25,7 @@ wheels/
 # Coverage
 .coverage
 htmlcov/
+
+# Inference outputs
+outputs/*
+!outputs/.gitkeep

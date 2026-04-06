@@ -9,7 +9,7 @@ license: mit
 base_path: /web
 tags:
   - openenv
-short_description: Cooperative multi-agent RL environment for adaptive traffic signal control
+short_description: Multi-agent RL for adaptive traffic signal control
 ---
 
 # TrafficSignalEnv
