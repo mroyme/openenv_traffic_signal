@@ -5,7 +5,7 @@ colorFrom: blue
 colorTo: green
 sdk: docker
 app_port: 8000
-license: apache-2.0
+license: mit
 base_path: /web
 tags:
   - openenv

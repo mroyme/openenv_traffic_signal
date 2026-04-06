@@ -19,7 +19,7 @@ tags:
   - cooperative-rl
   - urban
   - transportation
-license: apache-2.0
+license: mit
 tasks:
   - id: corridor_coordination
     difficulty: easy
