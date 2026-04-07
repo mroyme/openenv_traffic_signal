@@ -65,7 +65,7 @@ from models import AgentAction, TrafficAction
 IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
-MODEL_NAME = os.getenv("MODEL_NAME") or "Qwen/Qwen2.5-72B-Instruct"
+MODEL_NAME = os.getenv("MODEL_NAME") or "meta-llama/Llama-3.3-70B-Instruct"
 ENV_URL = (
     os.getenv("OPENENV_TRAFFIC_SIGNAL_ENV_URL")
     or os.getenv("TRAFFIC_ENV_URL")
