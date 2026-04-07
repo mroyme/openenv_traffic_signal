@@ -9,7 +9,7 @@ description = "Cooperative multi-agent RL environment for adaptive traffic signa
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Madhurjya Roy", email = "m@mroy.me" }]
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "openenv-core[core]>=0.2.3",
     "fastapi>=0.135.3",
