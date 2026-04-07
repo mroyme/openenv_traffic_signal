@@ -42,31 +42,27 @@ app = create_app(
 )
 
 
-def main(host: str = "0.0.0.0", port: int = 8000):
+def main():
     """Start the uvicorn server.
 
     Entry point for direct execution via ``uv run`` or ``python -m``::
 
         uv run --project . server
-        python -m server.app --port 8000
+        python -m server.app
 
     For production with multiple workers use uvicorn directly::
 
         uvicorn server.app:app --workers 4
-
-    Args:
-        host: Network interface to bind to.
-        port: Port number to listen on.
     """
+    import argparse
     import uvicorn
 
-    uvicorn.run(app, host=host, port=port)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8000)
+    args = parser.parse_args()
+    uvicorn.run(app, host=args.host, port=args.port)
 
 
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=8000)
-    args = parser.parse_args()
-    main(port=args.port)
+    main()
