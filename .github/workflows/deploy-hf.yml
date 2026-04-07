@@ -34,17 +34,51 @@ jobs:
         run: openenv push
 
       - name: Wait for Space to be healthy
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          echo "Waiting for Space to come up..."
-          for i in $(seq 1 30); do
+          API="https://huggingface.co/api/spaces/mroyme/openenv-traffic-signal"
+          AUTH="Authorization: Bearer $HF_TOKEN"
+
+          # Step 1: wait for rebuild to start (stage leaves RUNNING)
+          echo "Waiting for rebuild to start..."
+          for i in $(seq 1 18); do
+            stage=$(curl -sf -H "$AUTH" "$API" | jq -r '.runtime.stage // ""' 2>/dev/null || echo "")
+            echo "  stage=$stage"
+            if [ "$stage" != "RUNNING" ] && [ -n "$stage" ]; then
+              echo "Rebuild started (stage=$stage)"
+              break
+            fi
+            sleep 10
+          done
+
+          # Step 2: wait for new deployment to reach RUNNING or a terminal error
+          echo "Waiting for new deployment to complete..."
+          for i in $(seq 1 36); do
+            stage=$(curl -sf -H "$AUTH" "$API" | jq -r '.runtime.stage // ""' 2>/dev/null || echo "")
+            echo "  stage=$stage"
+            if [ "$stage" = "RUNNING" ]; then
+              echo "Space is running after new deployment"
+              break
+            fi
+            if [ "$stage" = "BUILD_ERROR" ] || [ "$stage" = "RUNTIME_ERROR" ]; then
+              echo "Deployment failed: stage=$stage"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          # Step 3: confirm /health responds
+          echo "Checking health endpoint..."
+          for i in $(seq 1 12); do
             status=$(curl -sf https://mroyme-openenv-traffic-signal.hf.space/health \
               | jq -r '.status // ""' 2>/dev/null || echo "")
             if [ "$status" = "healthy" ]; then
-              echo "Space is healthy after $((i * 10))s"
+              echo "Space is healthy"
               exit 0
             fi
-            echo "Attempt $i/30: not ready yet, waiting 10s..."
+            echo "  not healthy yet, waiting 10s..."
             sleep 10
           done
-          echo "Space did not become healthy within 300s"
+          echo "Space did not become healthy"
           exit 1
