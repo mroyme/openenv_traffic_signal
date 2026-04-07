@@ -1,3 +1,104 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2b686eb53fb8b15c8ad550c629b6b7971af20da8373f607716524b04c82e7d70
-size 4566
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 228" width="520" height="228" font-family="ui-monospace, monospace, sans-serif">
+  <defs>
+    <style>
+      text { paint-order: stroke fill; }
+      .ti  { font-size: 14px; font-weight: 600; text-anchor: middle;
+             fill: #111; stroke: #fff; stroke-width: 5; }
+      .su  { font-size: 11px; text-anchor: middle;
+             fill: #555; stroke: #fff; stroke-width: 4; }
+      .lb  { font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle;
+             fill: #111; stroke: none; }
+      .lb-i{ font-size: 11px; text-anchor: middle; dominant-baseline: middle;
+             fill: #bbb; stroke: none; }
+      .nn  { font-size: 9px; text-anchor: middle;
+             fill: #888; stroke: #fff; stroke-width: 3; }
+      .lt  { font-size: 10px; dominant-baseline: middle;
+             fill: #555; stroke: #fff; stroke-width: 3; }
+      .road{ stroke: #c8c8c8; stroke-width: 15; stroke-linecap: square; fill: none; }
+      .ri  { stroke: #e4e4e4; stroke-width: 12; stroke-linecap: square; fill: none; }
+      .na  { fill: #fff; stroke: #16a34a; stroke-width: 2.5; }
+      .ni  { fill: #f9fafb; stroke: #d1d5db; stroke-width: 1.5; stroke-dasharray: 3,2; }
+      .wv  { stroke: #16a34a; stroke-width: 1.5; stroke-dasharray: 6,4; fill: none; opacity: 0.8; }
+      .wt  { fill: #16a34a; stroke: none; }
+      .pd  { fill: #16a34a; }
+      .sep { stroke: #e5e7eb; stroke-width: 1; fill: none; }
+      @media (prefers-color-scheme: dark) {
+        .ti  { fill: #f0f0f0; stroke: #0a0e1a; }
+        .su  { fill: #9ca3af; stroke: #0a0e1a; }
+        .lb  { fill: #f0f0f0; }
+        .lb-i{ fill: #4b5563; }
+        .nn  { fill: #6b7280; stroke: #0a0e1a; }
+        .lt  { fill: #9ca3af; stroke: #0a0e1a; }
+        .road{ stroke: #4b5563; }
+        .ri  { stroke: #1f2937; }
+        .na  { fill: #0f172a; stroke: #4ade80; }
+        .ni  { fill: #1e293b; stroke: #374151; }
+        .wv  { stroke: #4ade80; }
+        .wt  { fill: #4ade80; }
+        .pd  { fill: #4ade80; }
+        .sep { stroke: #374151; }
+      }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="260" y="22" class="ti">Corridor Coordination</text>
+  <text x="260" y="40" class="su">Active agents: 0, 1, 2 · Max steps: 150</text>
+
+  <!-- Horizontal road -->
+  <line x1="50" y1="130" x2="470" y2="130" class="road"/>
+
+  <!-- Inactive vertical stubs below road -->
+  <line x1="130" y1="130" x2="130" y2="172" class="ri"/>
+  <line x1="260" y1="130" x2="260" y2="172" class="ri"/>
+  <line x1="390" y1="130" x2="390" y2="172" class="ri"/>
+
+  <!-- Active vertical stubs above road -->
+  <line x1="130" y1="77" x2="130" y2="130" class="road" style="stroke-width:11"/>
+  <line x1="260" y1="77" x2="260" y2="130" class="road" style="stroke-width:11"/>
+  <line x1="390" y1="77" x2="390" y2="130" class="road" style="stroke-width:11"/>
+
+  <!-- N labels -->
+  <text x="130" y="68" class="nn">N</text>
+  <text x="260" y="68" class="nn">N</text>
+  <text x="390" y="68" class="nn">N</text>
+
+  <!-- Green wave dashes -->
+  <line x1="156" y1="117" x2="232" y2="117" class="wv"/>
+  <line x1="286" y1="117" x2="362" y2="117" class="wv"/>
+  <polygon points="233,113 242,117 233,121" class="wt"/>
+  <polygon points="363,113 372,117 363,121" class="wt"/>
+
+  <!-- Inactive nodes (3, 4, 5) -->
+  <circle cx="130" cy="172" r="16" class="ni"/>
+  <text x="130" y="172" class="lb-i">3</text>
+  <circle cx="260" cy="172" r="16" class="ni"/>
+  <text x="260" y="172" class="lb-i">4</text>
+  <circle cx="390" cy="172" r="16" class="ni"/>
+  <text x="390" y="172" class="lb-i">5</text>
+
+  <!-- Active nodes (0, 1, 2) -->
+  <circle cx="130" cy="130" r="21" class="na"/>
+  <text x="130" y="130" class="lb">0</text>
+  <circle cx="260" cy="130" r="21" class="na"/>
+  <text x="260" y="130" class="lb">1</text>
+  <circle cx="390" cy="130" r="21" class="na"/>
+  <text x="390" y="130" class="lb">2</text>
+
+  <!-- Phase dots -->
+  <circle cx="116" cy="116" r="4" class="pd"/>
+  <circle cx="246" cy="116" r="4" class="pd"/>
+  <circle cx="376" cy="116" r="4" class="pd"/>
+
+  <!-- Separator -->
+  <line x1="12" y1="200" x2="508" y2="200" class="sep"/>
+
+  <!-- Legend -->
+  <circle cx="22" cy="215" r="7" class="na"/>
+  <text x="33" y="215" class="lt">Active (green wave)</text>
+  <circle cx="200" cy="215" r="7" class="ni"/>
+  <text x="211" y="215" class="lt">Inactive</text>
+  <line x1="308" y1="215" x2="328" y2="215" class="wv" style="opacity:1"/>
+  <polygon points="328,211 337,215 328,219" class="wt"/>
+  <text x="341" y="215" class="lt">Wave direction</text>
+</svg>

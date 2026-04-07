@@ -1,3 +1,117 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:23578d4a723794ae090777106563f0542fe7d25072fedac3f173f16e50e5df0f
-size 5426
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 322" width="420" height="322" font-family="ui-monospace, monospace, sans-serif">
+  <defs>
+    <style>
+      text { paint-order: stroke fill; }
+      .ti  { font-size: 14px; font-weight: 600; text-anchor: middle;
+             fill: #111; stroke: #fff; stroke-width: 5; }
+      .su  { font-size: 11px; text-anchor: middle;
+             fill: #555; stroke: #fff; stroke-width: 4; }
+      .lb  { font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle;
+             fill: #111; stroke: none; }
+      .lp  { font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle;
+             fill: #dc2626; stroke: none; }
+      .ls  { font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle;
+             fill: #15803d; stroke: none; }
+      .ld  { font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle;
+             fill: #b45309; stroke: none; }
+      .tag { font-size: 8px; font-weight: 600; text-anchor: middle;
+             fill: #15803d; stroke: #fff; stroke-width: 3; }
+      .tagd{ font-size: 8px; font-weight: 600; text-anchor: middle;
+             fill: #b45309; stroke: #fff; stroke-width: 3; }
+      .lt  { font-size: 9px; dominant-baseline: middle;
+             fill: #555; stroke: #fff; stroke-width: 3; }
+      .road{ stroke: #c8c8c8; stroke-width: 14; stroke-linecap: square; fill: none; }
+      .nd  { fill: #fff; stroke: #374151; stroke-width: 2; }
+      .np  { fill: #fff; stroke: #dc2626; stroke-width: 2.5; }
+      .ns  { fill: #f0fdf4; stroke: #16a34a; stroke-width: 3; }
+      .nde { fill: #fffbeb; stroke: #d97706; stroke-width: 3; }
+      .ep  { stroke: #dc2626; stroke-width: 3.5; stroke-dasharray: 8,4; fill: none; opacity: 0.85; }
+      .sep { stroke: #e5e7eb; stroke-width: 1; fill: none; }
+      @media (prefers-color-scheme: dark) {
+        .ti  { fill: #f0f0f0; stroke: #0a0e1a; }
+        .su  { fill: #9ca3af; stroke: #0a0e1a; }
+        .lb  { fill: #f0f0f0; }
+        .lp  { fill: #f87171; }
+        .ls  { fill: #4ade80; }
+        .ld  { fill: #fbbf24; }
+        .tag { fill: #4ade80; stroke: #0a0e1a; }
+        .tagd{ fill: #fbbf24; stroke: #0a0e1a; }
+        .lt  { fill: #9ca3af; stroke: #0a0e1a; }
+        .road{ stroke: #4b5563; }
+        .nd  { fill: #0f172a; stroke: #94a3b8; }
+        .np  { fill: #0f172a; stroke: #f87171; }
+        .ns  { fill: #052e16; stroke: #4ade80; }
+        .nde { fill: #1c1400; stroke: #fbbf24; }
+        .ep  { stroke: #f87171; }
+        .sep { stroke: #374151; }
+      }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="210" y="22" class="ti">Emergency Response</text>
+  <text x="210" y="40" class="su">Active agents: 0–8 · Max steps: 200</text>
+
+  <!-- Horizontal roads -->
+  <line x1="50" y1="95"  x2="370" y2="95"  class="road"/>
+  <line x1="50" y1="175" x2="370" y2="175" class="road"/>
+  <line x1="50" y1="255" x2="370" y2="255" class="road"/>
+
+  <!-- Vertical roads (end at bottom node edge) -->
+  <line x1="110" y1="57" x2="110" y2="276" class="road"/>
+  <line x1="210" y1="57" x2="210" y2="276" class="road"/>
+  <line x1="310" y1="57" x2="310" y2="276" class="road"/>
+
+  <!-- Emergency path overlay: 6→3→4→1→2 -->
+  <line x1="110" y1="255" x2="110" y2="175" class="ep"/>
+  <line x1="110" y1="175" x2="210" y2="175" class="ep"/>
+  <line x1="210" y1="175" x2="210" y2="95"  class="ep"/>
+  <line x1="210" y1="95"  x2="310" y2="95"  class="ep"/>
+
+  <!-- Default nodes -->
+  <circle cx="110" cy="95"  r="19" class="nd"/>
+  <text x="110" y="95"  class="lb">0</text>
+  <circle cx="310" cy="175" r="19" class="nd"/>
+  <text x="310" y="175" class="lb">5</text>
+  <circle cx="210" cy="255" r="19" class="nd"/>
+  <text x="210" y="255" class="lb">7</text>
+  <circle cx="310" cy="255" r="19" class="nd"/>
+  <text x="310" y="255" class="lb">8</text>
+
+  <!-- Path nodes (1, 3, 4) -->
+  <circle cx="210" cy="95"  r="19" class="np"/>
+  <text x="210" y="95"  class="lp">1</text>
+  <circle cx="110" cy="175" r="19" class="np"/>
+  <text x="110" y="175" class="lp">3</text>
+  <circle cx="210" cy="175" r="19" class="np"/>
+  <text x="210" y="175" class="lp">4</text>
+
+  <!-- Start node (6) -->
+  <circle cx="110" cy="255" r="21" class="ns"/>
+  <text x="110" y="255" class="ls">6</text>
+  <text x="110" y="230" class="tag">START</text>
+
+  <!-- Destination node (2) -->
+  <circle cx="310" cy="95"  r="21" class="nde"/>
+  <text x="310" y="95"  class="ld">2</text>
+  <text x="310" y="70"  class="tagd">DEST</text>
+
+  <!-- Emergency vehicle icon near node 6 -->
+  <rect x="134" y="249" width="18" height="11" rx="2" class="np" style="stroke-width:1.5"/>
+  <rect x="136" y="246" width="13" height="7"  rx="1" class="np" style="stroke-width:1"/>
+  <circle cx="138" cy="261" r="3" class="nd" style="stroke-width:1.5"/>
+  <circle cx="148" cy="261" r="3" class="nd" style="stroke-width:1.5"/>
+
+  <!-- Separator -->
+  <line x1="12" y1="288" x2="408" y2="288" class="sep"/>
+
+  <!-- Legend -->
+  <circle cx="16"  cy="305" r="6" class="ns"/>
+  <text x="26" y="305" class="lt">Start</text>
+  <circle cx="68"  cy="305" r="6" class="nde"/>
+  <text x="78" y="305" class="lt">Destination</text>
+  <circle cx="168" cy="305" r="6" class="np"/>
+  <text x="178" y="305" class="lt">On EV path</text>
+  <line x1="255" y1="305" x2="273" y2="305" class="ep" style="opacity:1"/>
+  <text x="278" y="305" class="lt">EV route</text>
+</svg>
