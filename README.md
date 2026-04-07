@@ -174,6 +174,7 @@ Vehicles spawn at boundary intersections according to a Poisson process and trav
 There are **9 agents** (one per intersection), each acting independently. They do not share a communication channel or send messages to one another — coordination emerges entirely through the shared environment and the reward signal.
 
 Each agent observes:
+
 - Its own queue lengths on all 4 lanes
 - Its current phase and how many steps it has been in that phase
 - The **outgoing queue lengths of its immediate neighbors** (N/S/E/W) — this is the only inter-agent information available, and it is read-only
