@@ -6,12 +6,9 @@ name: Docker
 # documentation.
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [main]
   push:
-    tags: ['v*.*.*']
+    branches: [ "main" ]
+    tags: [ 'v*.*.*' ]
   schedule:
     - cron: '19 0 * * *'
   pull_request:
@@ -26,7 +23,6 @@ env:
 
 jobs:
   build:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
     runs-on: ubuntu-latest
     permissions:
