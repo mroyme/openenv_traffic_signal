@@ -146,7 +146,7 @@ The deployed space includes:
 
 ### Environment Overview
 
-A 3x3 grid of intersections, each controlled by an independent agent:
+A 3×3 grid of intersections, each controlled by an independent agent:
 
 ```
     N       N       N
@@ -167,7 +167,18 @@ Each intersection has 4 incoming lanes (N, S, E, W) and cycles through 4 signal 
 - Phase 2: EW green, NS red
 - Phase 3: EW yellow, NS red (transition)
 
-Vehicles spawn at intersections according to a Poisson process and traverse the grid toward their destinations. Green signals allow one vehicle per step per lane to advance.
+Vehicles spawn at boundary intersections according to a Poisson process and traverse the grid toward their destinations. Green signals allow one vehicle per step per lane to advance. Yellow phases last 1 step and auto-advance — agents cannot interrupt them.
+
+#### Multi-Agent Coordination
+
+There are **9 agents** (one per intersection), each acting independently. They do not share a communication channel or send messages to one another — coordination emerges entirely through the shared environment and the reward signal.
+
+Each agent observes:
+- Its own queue lengths on all 4 lanes
+- Its current phase and how many steps it has been in that phase
+- The **outgoing queue lengths of its immediate neighbors** (N/S/E/W) — this is the only inter-agent information available, and it is read-only
+
+Because vehicles that leave one intersection join the next, an agent can infer upstream pressure from neighbor queues and time its phase changes to avoid blocking throughput. The grader rewards the collective outcome (mean wait time across all intersections), so agents that cooperate implicitly — e.g. by forming green waves — score higher than those acting purely on local state.
 
 ### Agent Loop
 
@@ -194,8 +205,20 @@ flowchart TD
 | Task ID                 | Difficulty | Active Agents         | Max Steps | Core Challenge                                                   |
 | ----------------------- | ---------- | --------------------- | --------- | ---------------------------------------------------------------- |
 | `corridor_coordination` | Easy       | 3 (intersections 0-2) | 150       | Learn green wave along a corridor                                |
-| `grid_coordination`     | Medium     | 9 (full 3x3 grid)     | 200       | Minimize global wait across all directions                       |
-| `emergency_response`    | Hard       | 9 (full 3x3 grid)     | 200       | Clear path for emergency vehicle while managing civilian traffic |
+| `grid_coordination`     | Medium     | 9 (full 3×3 grid)     | 200       | Minimize global wait across all directions                       |
+| `emergency_response`    | Hard       | 9 (full 3×3 grid)     | 200       | Clear path for emergency vehicle while managing civilian traffic |
+
+#### corridor_coordination
+
+Three agents control intersections 0, 1, 2 — a single horizontal corridor. Traffic flows predominantly east-west, and the optimal strategy is a **green wave**: stagger EW-green phases so a platoon of vehicles clears all three intersections without stopping. The task tests whether agents can synchronize phase timing across a linear chain, where each intersection's outflow becomes the next one's inflow. Scored against a 30-step fixed-cycle baseline; `score = 1 - (agent_travel_time / baseline_travel_time)`.
+
+#### grid_coordination
+
+All 9 agents are active across the full 3×3 grid with balanced NS and EW demand. The challenge is 2D: a green wave in one direction creates red congestion in the perpendicular one, so agents must negotiate phase timing to minimize **aggregate** wait time rather than optimising any single corridor. Good solutions tend to involve synchronized switching that avoids cascading queues. Scored as `score = 1 - (agent_wait / baseline_wait)`.
+
+#### emergency_response
+
+An emergency vehicle (ambulance) spawns at a random boundary and must reach its destination as quickly as possible. Agents score on two objectives simultaneously: (1) clearing the emergency vehicle's path by holding green on its approaching lane, and (2) keeping civilian wait times reasonable while doing so. The combined score is `0.6 × (1 - emergency_time / max_time) + 0.4 × (1 - civilian_wait / baseline_wait)`. The emergency vehicle's position and target are visible in the observation under `emergency_vehicle`, giving agents the information needed to prioritize its route.
 
 <div align="center">
 <img src="docs/images/corridor_coordination.svg" alt="Corridor Coordination" width="32%"/>
