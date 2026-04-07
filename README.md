@@ -1,5 +1,5 @@
 ---
-title: Traffic Signal Environment Server 
+title: Traffic Signal Environment Server
 emoji: "🚦"
 colorFrom: blue
 colorTo: green
@@ -159,6 +159,26 @@ Each intersection has 4 incoming lanes (N, S, E, W) and cycles through 4 signal 
 
 Vehicles spawn at intersections according to a Poisson process and traverse the grid toward their destinations. Green signals allow one vehicle per step per lane to advance.
 
+### Agent Loop
+
+```mermaid
+flowchart TD
+    classDef config fill:#1f2937,stroke:#6b7280,color:#f9fafb
+    classDef env   fill:#14532d,stroke:#16a34a,color:#f0fdf4
+    classDef obs   fill:#1e3a5f,stroke:#3b82f6,color:#dbeafe
+    classDef agent fill:#3b0764,stroke:#9333ea,color:#f3e8ff
+    classDef step  fill:#78350f,stroke:#f59e0b,color:#fef3c7
+    classDef score fill:#14532d,stroke:#4ade80,color:#bbf7d0
+
+    CFG["⚙️ Task Config\ntask_id · seed · episode"]:::config
+    CFG -->|"env.reset()"| ENV["🚦 TrafficSignalEnv\n3×3 intersection grid"]:::env
+    ENV --> OBS["📡 Observation to agent\n• Queue lengths N/S/E/W per agent\n• Current phase & steps elapsed\n• Neighbor upstream queue lengths\n• Global & local wait times\n• Emergency vehicle position (Task 3 only)"]:::obs
+    OBS -->|"action"| AGT["🤖 Agent\nLLM"]:::agent
+    AGT -->|"TrafficAction"| STEP["⚡ TrafficAction → env.step()\nkeep / switch per active agent"]:::step
+    STEP -->|"if done = false · repeat"| OBS
+    STEP -->|"if done = true"| SCORE["🏁 Grader\nFinal Score  0.0 – 1.0"]:::score
+```
+
 ### Tasks
 
 | Task ID                 | Difficulty | Active Agents         | Max Steps | Core Challenge                                                   |
@@ -193,22 +213,22 @@ Constraints:
 
 **TrafficObservation**: Contains per-agent state and global metrics
 
-| Field                      | Type                            | Description                             |
-| -------------------------- | ------------------------------- | --------------------------------------- |
-| `task_id`                  | `str`                           | Current task identifier                 |
-| `episode_id`               | `str`                           | Unique episode identifier               |
-| `step`                     | `int`                           | Current step number                     |
-| `agents`                   | `List[IntersectionObservation]` | Per-agent state                         |
-| `agents[].queue_lengths`   | `List[float]`                   | Vehicles waiting in N, S, E, W lanes    |
-| `agents[].current_phase`   | `int`                           | Signal phase (0-3)                      |
-| `agents[].phase_elapsed`   | `int`                           | Steps in current phase                  |
-| `agents[].neighbor_queues` | `List[float]`                   | Outgoing queues of N/S/E/W neighbors    |
-| `agents[].local_wait_time` | `float`                         | Mean wait time at this intersection     |
-| `global_wait_time`         | `float`                         | Mean wait time across all intersections |
-| `step_reward`              | `float`                         | Reward for the last action              |
-| `cumulative_score`         | `float`                         | Running average reward                  |
-| `emergency_vehicle`        | `EmergencyVehicleState?`        | Emergency vehicle state (Task 3 only)   |
-| `done`                     | `bool`                          | Whether the episode has ended           |
+| Field                      | Type                            | Description                                           |
+| -------------------------- | ------------------------------- | ----------------------------------------------------- |
+| `task_id`                  | `str`                           | Current task identifier                               |
+| `episode_id`               | `str`                           | Unique episode identifier                             |
+| `step`                     | `int`                           | Current step number                                   |
+| `agents`                   | `List[IntersectionObservation]` | Per-agent state                                       |
+| `agents[].queue_lengths`   | `List[float]`                   | Vehicles waiting in N, S, E, W lanes                  |
+| `agents[].current_phase`   | `int`                           | Signal phase (0-3)                                    |
+| `agents[].phase_elapsed`   | `int`                           | Steps in current phase                                |
+| `agents[].neighbor_queues` | `List[float]`                   | Outgoing queues of N/S/E/W neighbors                  |
+| `agents[].local_wait_time` | `float`                         | Mean wait time at this intersection                   |
+| `global_wait_time`         | `float`                         | Mean wait time across all intersections               |
+| `reward`                   | `float`                         | Reward for the last action                            |
+| `final_score`              | `float \| null`                 | Final grader score in [0, 1]; set at episode end only |
+| `emergency_vehicle`        | `EmergencyVehicleState?`        | Emergency vehicle state (Task 3 only)                 |
+| `done`                     | `bool`                          | Whether the episode has ended                         |
 
 ### Reward
 
@@ -373,15 +393,71 @@ Run the server locally for development:
 uv run uvicorn server.app:app --reload --port 8000
 ```
 
-You can also validate and run inference:
+### Running Inference
+
+`inference.py` runs one episode of the LLM agent against the environment. It requires a running server and API credentials.
+
+**1. Start the server** (in a separate terminal):
 
 ```bash
-# Validate
-uv run openenv validate --url http://localhost:8000
+uv run uvicorn server.app:app --host 127.0.0.1 --port 8000
+```
 
-# Run inference
-API_BASE_URL=https://api.openai.com/v1 MODEL_NAME=gpt-4o HF_TOKEN=your-key \
-  uv run python -m inference
+**2. Set credentials** — the script reads these from environment variables or a `.env` file:
+
+| Variable       | Description                                                      |
+| -------------- | ---------------------------------------------------------------- |
+| `HF_TOKEN`     | Your Hugging Face API key (or set `API_KEY` for other providers) |
+| `API_BASE_URL` | LLM API endpoint (default: `https://router.huggingface.co/v1`)   |
+| `MODEL_NAME`   | Model identifier (default: `Qwen/Qwen2.5-72B-Instruct`)          |
+
+**3. Run each task** using the `TRAFFIC_TASK` environment variable:
+
+```bash
+# Easy — corridor green wave (3 agents, 150 steps)
+TRAFFIC_TASK=corridor_coordination uv run python inference.py
+
+# Medium — full grid coordination (9 agents, 200 steps)
+TRAFFIC_TASK=grid_coordination uv run python inference.py
+
+# Hard — emergency vehicle response (9 agents, 200 steps)
+TRAFFIC_TASK=emergency_response uv run python inference.py
+```
+
+Each command prints structured output to stdout:
+
+```
+[START] task=corridor_coordination env=traffic_signal model=Qwen2.5-72B-Instruct
+[STEP] step=1 action={0:keep,1:keep,2:keep} reward=0.22 done=false error=null
+...
+[END] success=true steps=150 score=0.64 rewards=0.22,0.21,...
+```
+
+Pass `--write` to also save output to `outputs/<task>_ep<n>.txt`:
+
+```bash
+TRAFFIC_TASK=grid_coordination uv run python inference.py --write
+```
+
+Additional options via environment variables:
+
+| Variable          | Description                          | Default                 |
+| ----------------- | ------------------------------------ | ----------------------- |
+| `TRAFFIC_ENV_URL` | Server URL                           | `http://localhost:8000` |
+| `TRAFFIC_EPISODE` | Episode index (controls random seed) | `0`                     |
+
+To connect to a remote server instead of running locally, set `TRAFFIC_ENV_URL`:
+
+```bash
+TRAFFIC_ENV_URL=https://your-space.hf.space \
+TRAFFIC_TASK=grid_coordination \
+  uv run python inference.py
+```
+
+You can also validate the environment before running:
+
+```bash
+uv run openenv validate
 ```
 
 ## Project Structure
@@ -430,7 +506,7 @@ Purely independent agents with separate reward functions would optimize locally,
 ```bibtex
 @software{trafficsignalenv2026,
   title   = {TrafficSignalEnv: Cooperative Multi-Agent RL for Adaptive Traffic Signal Control},
-  author  = {OpenEnv Contributors},
+  author  = {Madhurjya Roy},
   year    = {2026},
   url     = {https://huggingface.co/spaces/mroyme/openenv-traffic-signal},
   note    = {OpenEnv-compatible environment for multi-agent traffic signal coordination}
