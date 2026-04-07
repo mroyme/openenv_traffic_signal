@@ -211,21 +211,21 @@ flowchart TD
 
 #### corridor_coordination
 
+<img src="docs/images/corridor_coordination.svg" alt="Corridor Coordination" width="60%"/>
+
 Three agents control intersections 0, 1, 2 — a single horizontal corridor. Traffic flows predominantly east-west, and the optimal strategy is a **green wave**: stagger EW-green phases so a platoon of vehicles clears all three intersections without stopping. The task tests whether agents can synchronize phase timing across a linear chain, where each intersection's outflow becomes the next one's inflow. Scored against a 30-step fixed-cycle baseline; `score = 1 - (agent_travel_time / baseline_travel_time)`.
 
 #### grid_coordination
+
+<img src="docs/images/grid_coordination.svg" alt="Grid Coordination" width="60%"/>
 
 All 9 agents are active across the full 3×3 grid with balanced NS and EW demand. The challenge is 2D: a green wave in one direction creates red congestion in the perpendicular one, so agents must negotiate phase timing to minimize **aggregate** wait time rather than optimising any single corridor. Good solutions tend to involve synchronized switching that avoids cascading queues. Scored as `score = 1 - (agent_wait / baseline_wait)`.
 
 #### emergency_response
 
-An emergency vehicle (ambulance) spawns at a random boundary and must reach its destination as quickly as possible. Agents score on two objectives simultaneously: (1) clearing the emergency vehicle's path by holding green on its approaching lane, and (2) keeping civilian wait times reasonable while doing so. The combined score is `0.6 × (1 - emergency_time / max_time) + 0.4 × (1 - civilian_wait / baseline_wait)`. The emergency vehicle's position and target are visible in the observation under `emergency_vehicle`, giving agents the information needed to prioritize its route.
+<img src="docs/images/emergency_response.svg" alt="Emergency Response" width="60%"/>
 
-<div align="center">
-<img src="docs/images/corridor_coordination.svg" alt="Corridor Coordination" width="32%"/>
-<img src="docs/images/grid_coordination.svg" alt="Grid Coordination" width="32%"/>
-<img src="docs/images/emergency_response.svg" alt="Emergency Response" width="32%"/>
-</div>
+An emergency vehicle (ambulance) spawns at a random boundary and must reach its destination as quickly as possible. Agents score on two objectives simultaneously: (1) clearing the emergency vehicle's path by holding green on its approaching lane, and (2) keeping civilian wait times reasonable while doing so. The combined score is `0.6 × (1 - emergency_time / max_time) + 0.4 × (1 - civilian_wait / baseline_wait)`. The emergency vehicle's position and target are visible in the observation under `emergency_vehicle`, giving agents the information needed to prioritize its route.
 
 ### Action
 
