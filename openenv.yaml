@@ -26,16 +26,19 @@ tasks:
     description: 3 intersections in a line learning green wave coordination
     max_steps: 150
     score_range: [0.0, 1.0]
+    grader: graders.corridor_grader:grade
   - id: grid_coordination
     difficulty: medium
     description: 9-intersection 3x3 grid with balanced traffic from all directions
     max_steps: 200
     score_range: [0.0, 1.0]
+    grader: graders.grid_grader:grade
   - id: emergency_response
     difficulty: hard
     description: 9-intersection grid with emergency vehicle requiring preemptive path clearing
     max_steps: 200
     score_range: [0.0, 1.0]
+    grader: graders.emergency_grader:grade
 observation_space:
   type: structured
   fields:
