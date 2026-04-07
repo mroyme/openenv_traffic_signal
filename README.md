@@ -466,9 +466,10 @@ uv run openenv validate
 ## Project Structure
 
 ```
-openenv-traffic-signal/        # repo root
+openenv_traffic_signal/        # repo root
 ├── README.md
 ├── openenv.yaml               # OpenEnv manifest
+├── Dockerfile                 # Container image definition
 ├── pyproject.toml             # Project metadata and dependencies
 ├── uv.lock                    # Locked dependencies (generated)
 ├── conftest.py                # Pytest configuration
@@ -476,12 +477,14 @@ openenv-traffic-signal/        # repo root
 ├── client.py                  # TrafficSignalEnv client
 ├── models.py                  # Action and Observation models
 ├── inference.py               # LLM agent inference script
-├── tests/                     # Test suite
-├── docs/images/                    # Task diagrams
+├── .github/workflows/
+│   ├── deploy-hf.yml          # Deploy to HuggingFace Spaces on push to main
+│   └── docker-publish.yml     # Publish Docker image to GHCR
+├── docs/images/               # Task diagrams
 ├── graders/                   # Deterministic grading functions
 ├── simulator/                 # Traffic simulation core
+├── tests/                     # Test suite
 └── server/
-    ├── Dockerfile             # Container image definition
     ├── app.py                 # FastAPI application (HTTP + WebSocket endpoints)
     └── traffic_signal_environment.py  # Core environment logic
 ```
