@@ -12,7 +12,7 @@ tags:
 short_description: Multi-agent RL for adaptive traffic signal control
 ---
 
-# TrafficSignalEnv
+# Traffic Signal Environment Server
 
 [![CI](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/ci.yml/badge.svg)](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/ci.yml)
 [![Docker](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/docker-publish.yml)
