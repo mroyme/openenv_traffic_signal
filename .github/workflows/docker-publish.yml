@@ -10,6 +10,8 @@ on:
     workflows: ["CI"]
     types: [completed]
     branches: [main]
+  push:
+    tags: ['v*.*.*']
   schedule:
     - cron: '19 0 * * *'
   pull_request:
