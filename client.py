@@ -23,7 +23,7 @@ class TrafficSignalEnv(EnvClient[TrafficAction, TrafficObservation, TrafficState
         ...
         ...     action = TrafficAction(agent_actions=[AgentAction(agent_id=0, phase_action="keep")])
         ...     result = await env.step(action)
-        ...     print(result.observation.step_reward)
+        ...     print(result.observation.reward)
 
     Example with Docker:
         >>> # Automatically start container and connect

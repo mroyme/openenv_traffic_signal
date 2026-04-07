@@ -91,10 +91,12 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
         self._state = TrafficState()
         self._grid: TrafficGrid | None = None
         self._rng: np.random.Generator | None = None
-        self._config: TaskConfig = TaskConfig(active_intersections=[], spawn_rate=0.4, max_steps=200, emergency=False)
+        self._config: TaskConfig = TaskConfig(
+            active_intersections=[], spawn_rate=0.4, max_steps=200, emergency=False
+        )
         self._baseline_wait: float = 0.0
         self._wait_time_history: list[float] = []
-        self._cumulative_reward: float = 0.0
+
         self._prev_wait: float = 0.0
 
         # Emergency vehicle tracking
@@ -147,7 +149,7 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
         logger.info("Baseline wait time: %s", self._baseline_wait)
 
         self._wait_time_history = []
-        self._cumulative_reward = 0.0
+
         self._prev_wait = 0.0
 
         # Emergency vehicle setup for task 3
@@ -224,7 +226,6 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
         step_reward = self._compute_step_reward(
             prev_wait, new_wait, self._baseline_wait, emergency_delta
         )
-        self._cumulative_reward += step_reward
 
         self._state.step_count += 1
         self._state.total_wait_time = (
@@ -447,8 +448,6 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
                 path_remaining=list(self._emergency_path),
             )
 
-        cumulative = round(self._cumulative_reward / max(self._state.step_count, 1), 4)
-
         return TrafficObservation(
             task_id=self._state.task_id,
             episode_id=self._state.episode_id or "",
@@ -456,7 +455,6 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
             agents=agents,
             global_wait_time=round(global_wait, 4),
             reward=round(reward, 4),
-            cumulative_score=cumulative,
             feedback_message=feedback_message,
             done=self._state.is_complete,
             emergency_vehicle=emergency_state,

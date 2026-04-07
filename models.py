@@ -80,8 +80,7 @@ class TrafficObservation(Observation):
         step: Current step number within the episode.
         agents: Per-agent observations for each active intersection.
         global_wait_time: Mean vehicle wait time across all intersections.
-        step_reward: Reward received for the most recent action.
-        cumulative_score: Running average reward over the episode.
+        final_score: Final grader score in [0, 1]; only set at episode end.
         feedback_message: Human-readable status message.
         emergency_vehicle: Emergency vehicle state; present only in emergency_response task.
     """
@@ -91,8 +90,7 @@ class TrafficObservation(Observation):
     step: int
     agents: list[IntersectionObservation]
     global_wait_time: float
-    step_reward: float
-    cumulative_score: float
+    final_score: float | None = None
     feedback_message: str
     emergency_vehicle: EmergencyVehicleState | None = None
 
