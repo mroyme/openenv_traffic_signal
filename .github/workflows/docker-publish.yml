@@ -9,8 +9,6 @@ on:
   push:
     branches: [ "main" ]
     tags: [ 'v*.*.*' ]
-  schedule:
-    - cron: '19 0 * * *'
   pull_request:
     branches: [ "main" ]
 
