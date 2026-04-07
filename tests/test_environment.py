@@ -10,11 +10,14 @@ def env():
     return TrafficEnvironment()
 
 
-@pytest.mark.parametrize("task_id", [
-    "corridor_coordination",
-    "grid_coordination",
-    "emergency_response",
-])
+@pytest.mark.parametrize(
+    "task_id",
+    [
+        "corridor_coordination",
+        "grid_coordination",
+        "emergency_response",
+    ],
+)
 def test_reset_returns_valid_observation(env, task_id):
     obs = env.reset(seed=42, task_id=task_id)
     assert obs.step == 0
@@ -23,11 +26,14 @@ def test_reset_returns_valid_observation(env, task_id):
     assert not obs.done
 
 
-@pytest.mark.parametrize("task_id", [
-    "corridor_coordination",
-    "grid_coordination",
-    "emergency_response",
-])
+@pytest.mark.parametrize(
+    "task_id",
+    [
+        "corridor_coordination",
+        "grid_coordination",
+        "emergency_response",
+    ],
+)
 def test_five_steps(env, task_id):
     obs = env.reset(seed=42, task_id=task_id)
     for _ in range(5):

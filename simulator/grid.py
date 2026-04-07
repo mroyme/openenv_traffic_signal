@@ -386,5 +386,3 @@ def _opposite(direction: str) -> str:
         The direction directly opposite the given one.
     """
     return {"N": "S", "S": "N", "E": "W", "W": "E"}[direction]
-
-
