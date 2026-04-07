@@ -21,12 +21,12 @@ short_description: Multi-agent RL for adaptive traffic signal control
 > [!NOTE]
 > This is a submission for the **Scaler × OpenEnv Hackathon**.
 
+> [!TIP]
+> A live deployed version is available at **https://mroyme-openenv-traffic-signal.hf.space/**
+
 A cooperative multi-agent RL environment for adaptive traffic signal control across a 3x3 grid of intersections. Perfect for testing multi-agent coordination policies and demonstrating environment usage patterns.
 
 Urban traffic congestion costs the global economy over $1 trillion annually. Adaptive traffic signal control represents one of the highest-impact applications of multi-agent reinforcement learning, where independent agents controlling individual intersections must learn to coordinate without centralized control.
-
-> [!TIP]
-> A live deployed version is available at **https://mroyme-openenv-traffic-signal.hf.space/**
 
 ## Quick Start
 
