@@ -66,10 +66,30 @@ IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL") or "https://router.huggingface.co/v1"
 MODEL_NAME = os.getenv("MODEL_NAME") or "Qwen/Qwen2.5-72B-Instruct"
-ENV_URL = os.getenv("TRAFFIC_ENV_URL", "http://localhost:8000")
-TASK_NAME = os.getenv("TRAFFIC_TASK", "corridor_coordination")
-EPISODE = int(os.getenv("TRAFFIC_EPISODE", "0"))
-BENCHMARK = "traffic_signal"
+ENV_URL = (
+    os.getenv("OPENENV_TRAFFIC_SIGNAL_ENV_URL")
+    or os.getenv("TRAFFIC_ENV_URL")
+    or os.getenv("ENV_URL")
+    or "http://localhost:8000"
+)
+TASK_NAME = (
+    os.getenv("OPENENV_TRAFFIC_SIGNAL_TASK")
+    or os.getenv("TRAFFIC_TASK")
+    or os.getenv("TASK_NAME")
+    or "corridor_coordination"
+)
+EPISODE = int(
+    os.getenv("OPENENV_TRAFFIC_SIGNAL_EPISODE")
+    or os.getenv("TRAFFIC_EPISODE")
+    or os.getenv("EPISODE")
+    or "0"
+)
+BENCHMARK = (
+    os.getenv("OPENENV_TRAFFIC_SIGNAL_BENCHMARK")
+    or os.getenv("TRAFFIC_BENCHMARK")
+    or os.getenv("BENCHMARK")
+    or "traffic_signal"
+)
 BASE_SEED = 42
 MIN_HOLD_STEPS = 10  # minimum steps before any switch is allowed
 MAX_HOLD_STEPS = (
