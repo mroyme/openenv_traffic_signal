@@ -11,7 +11,6 @@ ARG BUILD_MODE=in-repo
 ARG ENV_NAME=openenv-traffic-signal
 
 COPY . /app/env
-RUN exit 1  # intentional break to test failed deployment
 
 WORKDIR /app/env
 
