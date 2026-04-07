@@ -1,0 +1,50 @@
+name: Deploy to HuggingFace Spaces
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: huggingface
+      url: https://huggingface.co/spaces/mroyme/openenv-traffic-signal
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install openenv
+        run: pip install openenv-core
+
+      - name: Push to HuggingFace Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: openenv push
+
+      - name: Wait for Space to be healthy
+        run: |
+          echo "Waiting for Space to come up..."
+          for i in $(seq 1 30); do
+            status=$(curl -sf https://mroyme-openenv-traffic-signal.hf.space/health \
+              | jq -r '.status // ""' 2>/dev/null || echo "")
+            if [ "$status" = "healthy" ]; then
+              echo "Space is healthy after $((i * 10))s"
+              exit 0
+            fi
+            echo "Attempt $i/30: not ready yet, waiting 10s..."
+            sleep 10
+          done
+          echo "Space did not become healthy within 300s"
+          exit 1
