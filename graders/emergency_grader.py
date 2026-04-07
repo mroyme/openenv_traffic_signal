@@ -35,4 +35,3 @@ def grade(
 
     score = 0.6 * emergency_score + 0.4 * civilian_score
     return round(float(np.clip(score, 0.0, 1.0)), 4)
-

@@ -60,7 +60,7 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
         >>>
         >>> action = TrafficAction(agent_actions=[AgentAction(agent_id=0, phase_action="keep")])
         >>> obs = env.step(action)
-        >>> print(obs.step_reward)
+        >>> print(obs.reward)
     """
 
     SUPPORTS_CONCURRENT_SESSIONS: bool = True
@@ -171,7 +171,7 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
         )
 
         obs = self._build_observation(
-            step_reward=0.0,
+            reward=0.0,
             feedback_message="Episode started. Control traffic signals to minimize wait times.",
         )
         return obs
@@ -198,7 +198,7 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
 
         if self._state.is_complete:
             return self._build_observation(
-                step_reward=0.0,
+                reward=0.0,
                 feedback_message="Episode already complete.",
             )
 
@@ -243,13 +243,13 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
             feedback += " | Episode complete."
 
         obs = self._build_observation(
-            step_reward=step_reward,
+            reward=step_reward,
             feedback_message=feedback,
         )
 
         # Compute final score if done
         if done:
-            obs.reward = self._compute_final_score()
+            obs.final_score = self._compute_final_score()
 
         return obs
 
@@ -424,12 +424,12 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
         return 0.0
 
     def _build_observation(
-        self, step_reward: float, feedback_message: str
+        self, reward: float, feedback_message: str
     ) -> TrafficObservation:
         """Construct the full TrafficObservation from current environment state.
 
         Args:
-            step_reward: Reward value for the most recent action.
+            reward: Per-step reward for the most recent action.
             feedback_message: Human-readable status string for this step.
 
         Returns:
@@ -455,7 +455,7 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
             step=self._state.step_count,
             agents=agents,
             global_wait_time=round(global_wait, 4),
-            step_reward=round(step_reward, 4),
+            reward=round(reward, 4),
             cumulative_score=cumulative,
             feedback_message=feedback_message,
             done=self._state.is_complete,

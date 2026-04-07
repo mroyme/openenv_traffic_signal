@@ -21,4 +21,3 @@ def grade(agent_corridor_time: float, baseline_corridor_time: float) -> float:
         return 0.0
     score = 1.0 - (agent_corridor_time / baseline_corridor_time)
     return round(float(np.clip(score, 0.0, 1.0)), 4)
-
