@@ -14,6 +14,9 @@ short_description: Multi-agent RL for adaptive traffic signal control
 
 # TrafficSignalEnv
 
+> [!NOTE]
+> This is a submission for the **Scaler × OpenEnv Hackathon**.
+
 A cooperative multi-agent RL environment for adaptive traffic signal control across a 3x3 grid of intersections. Perfect for testing multi-agent coordination policies and demonstrating environment usage patterns.
 
 Urban traffic congestion costs the global economy over $1 trillion annually. Adaptive traffic signal control represents one of the highest-impact applications of multi-agent reinforcement learning, where independent agents controlling individual intersections must learn to coordinate without centralized control.
@@ -71,7 +74,7 @@ Before using the environment, you need to build the Docker image:
 
 ```bash
 # From project root
-docker build -t openenv-traffic-signal:latest -f server/Dockerfile .
+docker build -t openenv-traffic-signal:latest .
 ```
 
 ## Deploying to Hugging Face Spaces
