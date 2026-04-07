@@ -14,6 +14,10 @@ short_description: Multi-agent RL for adaptive traffic signal control
 
 # TrafficSignalEnv
 
+[![CI](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/ci.yml/badge.svg)](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/ci.yml)
+[![Docker](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/docker-publish.yml)
+[![HuggingFace Spaces](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/deploy-hf.yml/badge.svg)](https://github.com/mroyme/openenv_traffic_signal/actions/workflows/deploy-hf.yml)
+
 > [!NOTE]
 > This is a submission for the **Scaler × OpenEnv Hackathon**.
 
