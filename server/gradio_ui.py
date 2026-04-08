@@ -37,7 +37,7 @@ def _fmt_intersection(a: Dict[str, Any], ev_pos: int | None = None) -> str:
     lwait = a["local_wait_time"]
 
     icon = PHASE_ICON.get(phase, "?")
-    ev_marker = " \U0001F691" if ev_pos == aid else ""
+    ev_marker = " \U0001f691" if ev_pos == aid else ""
 
     ns_total = q[0] + q[1]
     ew_total = q[2] + q[3]
@@ -69,8 +69,7 @@ def _fmt_grid(data: Dict[str, Any]) -> str:
     # Header
     reward_str = f" | Reward: **{reward:.4f}**" if reward is not None else ""
     lines.append(
-        f"### Step {step} | Task: `{task}` | "
-        f"Global wait: **{gwait:.3f}**{reward_str}"
+        f"### Step {step} | Task: `{task}` | Global wait: **{gwait:.3f}**{reward_str}"
     )
 
     if done:
@@ -83,7 +82,7 @@ def _fmt_grid(data: Dict[str, Any]) -> str:
     if ev:
         path_str = " -> ".join(str(p) for p in ev["path_remaining"])
         lines.append(
-            f"\n\U0001F691 **Emergency**: intersection **{ev['position']}** "
+            f"\n\U0001f691 **Emergency**: intersection **{ev['position']}** "
             f"-> dest **{ev['destination']}** | "
             f"elapsed: {ev['steps_elapsed']} steps | "
             f"path: {path_str}"
@@ -121,23 +120,29 @@ def _fmt_grid(data: Dict[str, Any]) -> str:
         for b in split_blocks:
             b.extend([""] * (max_lines - len(b)))
 
-        header = "| " + " | ".join(f"Intersection {row * 3 + c}" for c in cols_used) + " |"
+        header = (
+            "| " + " | ".join(f"Intersection {row * 3 + c}" for c in cols_used) + " |"
+        )
         sep = "|" + "|".join("---" for _ in cols_used) + "|"
         lines.append(header)
         lines.append(sep)
         for line_idx in range(max_lines):
-            row_line = "| " + " | ".join(
-                f"`{split_blocks[ci][line_idx]}`" for ci in range(len(cols_used))
-            ) + " |"
+            row_line = (
+                "| "
+                + " | ".join(
+                    f"`{split_blocks[ci][line_idx]}`" for ci in range(len(cols_used))
+                )
+                + " |"
+            )
             lines.append(row_line)
         lines.append("")
 
     # Phase legend
     lines.append(
-        "*Phase: \U0001F7E2 NS = North-South green, "
-        "\U0001F7E2 EW = East-West green, "
-        "\U0001F7E1 = yellow transition, "
-        "\U0001F691 = emergency vehicle*"
+        "*Phase: \U0001f7e2 NS = North-South green, "
+        "\U0001f7e2 EW = East-West green, "
+        "\U0001f7e1 = yellow transition, "
+        "\U0001f691 = emergency vehicle*"
     )
 
     return "\n".join(lines)
@@ -245,9 +250,7 @@ def build_traffic_ui(
                 ]
                 # Show/hide agent dropdowns and reset them to "keep"
                 for i in range(MAX_AGENTS):
-                    updates.append(
-                        gr.update(visible=i < len(ids), value="keep")
-                    )
+                    updates.append(gr.update(visible=i < len(ids), value="keep"))
                 return updates
             except Exception as e:
                 return [
@@ -270,9 +273,7 @@ def build_traffic_ui(
             agent_actions = []
             for idx, aid in enumerate(ids):
                 action = agent_vals[idx] if idx < len(agent_vals) else "keep"
-                agent_actions.append(
-                    {"agent_id": aid, "phase_action": action}
-                )
+                agent_actions.append({"agent_id": aid, "phase_action": action})
             try:
                 data = await web_manager.step_environment(
                     {"agent_actions": agent_actions}
