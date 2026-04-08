@@ -47,4 +47,9 @@ class EmergencyGrader:
         agent_civilian_wait: float,
         baseline_civilian_wait: float,
     ) -> float:
-        return grade(agent_emergency_time, max_emergency_time, agent_civilian_wait, baseline_civilian_wait)
+        return grade(
+            agent_emergency_time,
+            max_emergency_time,
+            agent_civilian_wait,
+            baseline_civilian_wait,
+        )

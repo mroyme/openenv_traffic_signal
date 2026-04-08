@@ -26,5 +26,7 @@ def grade(agent_corridor_time: float, baseline_corridor_time: float) -> float:
 class CorridorGrader:
     """Callable grader class for corridor coordination."""
 
-    def __call__(self, agent_corridor_time: float, baseline_corridor_time: float) -> float:
+    def __call__(
+        self, agent_corridor_time: float, baseline_corridor_time: float
+    ) -> float:
         return grade(agent_corridor_time, baseline_corridor_time)

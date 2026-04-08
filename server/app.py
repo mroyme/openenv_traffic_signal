@@ -157,7 +157,9 @@ async def run_baseline():
                     pa: Literal["keep", "switch"] = (
                         "switch" if sync_decisions[a.agent_id] == "switch" else "keep"
                     )
-                    actions_list.append(AgentAction(agent_id=a.agent_id, phase_action=pa))
+                    actions_list.append(
+                        AgentAction(agent_id=a.agent_id, phase_action=pa)
+                    )
                     prev_phase[a.agent_id] = a.current_phase
             else:
                 for a in agents:
