@@ -141,6 +141,9 @@ The deployed space includes:
 - **API Documentation** at `/docs` - Full OpenAPI/Swagger interface
 - **Health Check** at `/health` - Container health monitoring
 - **WebSocket** at `/ws` - Persistent session endpoint for low-latency interactions
+- **Tasks** at `/tasks` - List all available tasks with metadata
+- **Grader** at `/grader` - Get grader score for the current/last episode
+- **Baseline** at `/baseline` - Run baseline agent against all tasks and return scores
 
 ## Environment Details
 
@@ -443,7 +446,7 @@ uv run uvicorn server.app:app --host 127.0.0.1 --port 8000
 | -------------- | ---------------------------------------------------------------- |
 | `HF_TOKEN`     | Your Hugging Face API key (or set `API_KEY` for other providers) |
 | `API_BASE_URL` | LLM API endpoint (default: `https://router.huggingface.co/v1`)   |
-| `MODEL_NAME`   | Model identifier (default: `Qwen/Qwen2.5-72B-Instruct`)          |
+| `MODEL_NAME`   | Model identifier (default: `meta-llama/Llama-3.3-70B-Instruct`)  |
 
 **3. Run each task** using the `TRAFFIC_TASK` environment variable:
 
@@ -461,7 +464,7 @@ TRAFFIC_TASK=emergency_response uv run python inference.py
 Each command prints structured output to stdout:
 
 ```
-[START] task=corridor_coordination env=traffic_signal model=Qwen2.5-72B-Instruct
+[START] task=corridor_coordination env=traffic_signal model=Llama-3.3-70B-Instruct
 [STEP] step=1 action={0:keep,1:keep,2:keep} reward=0.22 done=false error=null
 ...
 [END] success=true steps=150 score=0.64 rewards=0.22,0.21,...

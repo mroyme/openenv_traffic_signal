@@ -35,3 +35,16 @@ def grade(
 
     score = 0.6 * emergency_score + 0.4 * civilian_score
     return round(float(np.clip(score, 0.0, 1.0)), 4)
+
+
+class EmergencyGrader:
+    """Callable grader class for emergency response."""
+
+    def __call__(
+        self,
+        agent_emergency_time: float,
+        max_emergency_time: float,
+        agent_civilian_wait: float,
+        baseline_civilian_wait: float,
+    ) -> float:
+        return grade(agent_emergency_time, max_emergency_time, agent_civilian_wait, baseline_civilian_wait)

@@ -20,25 +20,35 @@ tags:
   - urban
   - transportation
 license: mit
+endpoints:
+  - /reset
+  - /step
+  - /state
+  - /tasks
+  - /grader
+  - /baseline
+  - /health
+  - /schema
+  - /ws
 tasks:
   - id: corridor_coordination
     difficulty: easy
     description: 3 intersections in a line learning green wave coordination
     max_steps: 150
     score_range: [0.0, 1.0]
-    grader: graders.corridor_grader:grade
+    grader: graders.corridor_grader:CorridorGrader
   - id: grid_coordination
     difficulty: medium
     description: 9-intersection 3x3 grid with balanced traffic from all directions
     max_steps: 200
     score_range: [0.0, 1.0]
-    grader: graders.grid_grader:grade
+    grader: graders.grid_grader:GridGrader
   - id: emergency_response
     difficulty: hard
     description: 9-intersection grid with emergency vehicle requiring preemptive path clearing
     max_steps: 200
     score_range: [0.0, 1.0]
-    grader: graders.emergency_grader:grade
+    grader: graders.emergency_grader:EmergencyGrader
 observation_space:
   type: structured
   fields:

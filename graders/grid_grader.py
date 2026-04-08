@@ -21,3 +21,10 @@ def grade(agent_mean_wait: float, baseline_mean_wait: float) -> float:
         return 0.0
     score = 1.0 - (agent_mean_wait / baseline_mean_wait)
     return round(float(np.clip(score, 0.0, 1.0)), 4)
+
+
+class GridGrader:
+    """Callable grader class for grid coordination."""
+
+    def __call__(self, agent_mean_wait: float, baseline_mean_wait: float) -> float:
+        return grade(agent_mean_wait, baseline_mean_wait)
