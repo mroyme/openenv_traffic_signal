@@ -124,7 +124,13 @@ class TrafficEnvironment(Environment[TrafficAction, TrafficObservation, TrafficS
         Returns:
             Initial TrafficObservation with reset grid state
         """
+        _TASK_ALIASES = {
+            "easy": "corridor_coordination",
+            "medium": "grid_coordination",
+            "hard": "emergency_response",
+        }
         task_id = task_id or "corridor_coordination"
+        task_id = _TASK_ALIASES.get(task_id, task_id)
         if task_id not in self.TASK_CONFIGS:
             raise ValueError(
                 f"Unknown task_id: {task_id}. Valid: {list(self.TASK_CONFIGS.keys())}"

@@ -34,7 +34,7 @@ def grade(
         civilian_score = 1.0 - (agent_civilian_wait / baseline_civilian_wait)
 
     score = 0.6 * emergency_score + 0.4 * civilian_score
-    return round(float(np.clip(score, 0.0, 1.0)), 4)
+    return round(float(np.clip(score, 0.001, 0.999)), 4)
 
 
 class EmergencyGrader:

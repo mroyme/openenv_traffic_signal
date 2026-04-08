@@ -18,9 +18,9 @@ def grade(agent_mean_wait: float, baseline_mean_wait: float) -> float:
         Score in [0.0, 1.0].
     """
     if baseline_mean_wait == 0:
-        return 0.0
+        return 0.001
     score = 1.0 - (agent_mean_wait / baseline_mean_wait)
-    return round(float(np.clip(score, 0.0, 1.0)), 4)
+    return round(float(np.clip(score, 0.001, 0.999)), 4)
 
 
 class GridGrader:

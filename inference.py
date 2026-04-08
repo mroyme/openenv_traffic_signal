@@ -76,8 +76,15 @@ TASK_NAME = (
     os.getenv("OPENENV_TRAFFIC_SIGNAL_TASK")
     or os.getenv("TRAFFIC_TASK")
     or os.getenv("TASK_NAME")
-    or "corridor_coordination"
+    or ""
 )
+ALL_TASKS = ["corridor_coordination", "grid_coordination", "emergency_response"]
+TASK_ALIASES: dict[str, str] = {
+    "easy": "corridor_coordination",
+    "medium": "grid_coordination",
+    "hard": "emergency_response",
+}
+TASK_NAME = TASK_ALIASES.get(TASK_NAME, TASK_NAME)
 EPISODE = int(
     os.getenv("OPENENV_TRAFFIC_SIGNAL_EPISODE")
     or os.getenv("TRAFFIC_EPISODE")
@@ -367,32 +374,19 @@ async def get_hold_plan(
     return parse_hold_plan(text, agent_ids)
 
 
-async def main(write: bool = False) -> None:
-    global _output_file
-    if write:
-        os.makedirs("outputs", exist_ok=True)
-        output_path = f"outputs/{TASK_NAME}_ep{EPISODE}.txt"
-        _output_file = open(output_path, "w")
-
-    client = AsyncOpenAI(base_url=API_BASE_URL, api_key=API_KEY)
-    seed = BASE_SEED + EPISODE
-
-    if IMAGE_NAME:
-        env = await TrafficSignalEnv.from_docker_image(IMAGE_NAME)
-    else:
-        env = TrafficSignalEnv(base_url=ENV_URL)
-
+async def run_task(
+    task_name: str, client: AsyncOpenAI, env: TrafficSignalEnv, seed: int
+) -> None:
+    """Run a single task episode and emit [START]/[STEP]/[END] to stdout."""
     rewards: list[float] = []
     steps_taken = 0
     score = 0.0
     success = False
-    error_msg: str | None = None
 
-    log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
+    log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        await env.connect()
-        result = await env.reset(seed=seed, task_id=TASK_NAME)
+        result = await env.reset(seed=seed, task_id=task_name)
         obs = result.observation
 
         # hold_plan used only for emergency_response task
@@ -415,9 +409,9 @@ async def main(write: bool = False) -> None:
 
             if needs_plan:
                 new_plan = await get_hold_plan(
-                    client, obs.model_dump(), TASK_NAME, agent_ids, phase_history[-6:]
+                    client, obs.model_dump(), task_name, agent_ids, phase_history[-6:]
                 )
-                if TASK_NAME == "emergency_response":
+                if task_name == "emergency_response":
                     for aid in needs_plan:
                         hold_plan[aid] = new_plan.get(aid, DEFAULT_HOLD_STEPS)
                     print(
@@ -429,7 +423,7 @@ async def main(write: bool = False) -> None:
 
             # Decide actions
             actions_list: list[dict] = []
-            if TASK_NAME in ("corridor_coordination", "grid_coordination"):
+            if task_name in ("corridor_coordination", "grid_coordination"):
                 sync_decisions = corridor_actions(obs.agents)
                 for a in obs.agents:
                     actions_list.append(
@@ -441,7 +435,7 @@ async def main(write: bool = False) -> None:
                     prev_phase[a.agent_id] = a.current_phase
             else:
                 for a in obs.agents:
-                    if TASK_NAME == "emergency_response":
+                    if task_name == "emergency_response":
                         # Use LLM hold plan
                         if a.current_phase in (
                             0,
@@ -469,8 +463,7 @@ async def main(write: bool = False) -> None:
             try:
                 result = await env.step(action)
             except Exception as exc:
-                error_msg = str(exc)
-                log_step(obs.step + 1, action_str(actions_list), 0.0, True, error_msg)
+                log_step(obs.step + 1, action_str(actions_list), 0.0, True, str(exc))
                 break
 
             obs = result.observation
@@ -489,18 +482,44 @@ async def main(write: bool = False) -> None:
                     f"global_wait={obs.global_wait_time:.4f} reward={reward:.4f}"
                 )
 
+        score = round(min(max(score, 0.01), 0.99), 2)
         success = score >= SUCCESS_SCORE_THRESHOLD
 
     except Exception as exc:
-        error_msg = str(exc)
-        print(f"[DEBUG] Episode error: {error_msg}", file=sys.stderr, flush=True)
+        print(f"[DEBUG] Episode error: {exc}", file=sys.stderr, flush=True)
 
+    finally:
+        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
+
+
+async def main(write: bool = False) -> None:
+    global _output_file
+
+    tasks_to_run = [TASK_NAME] if TASK_NAME else ALL_TASKS
+
+    if write:
+        os.makedirs("outputs", exist_ok=True)
+        label = TASK_NAME or "all"
+        output_path = f"outputs/{label}_ep{EPISODE}.txt"
+        _output_file = open(output_path, "w")
+
+    client = AsyncOpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+    seed = BASE_SEED + EPISODE
+
+    if IMAGE_NAME:
+        env = await TrafficSignalEnv.from_docker_image(IMAGE_NAME)
+    else:
+        env = TrafficSignalEnv(base_url=ENV_URL)
+
+    try:
+        await env.connect()
+        for task_name in tasks_to_run:
+            await run_task(task_name, client, env, seed)
     finally:
         try:
             await env.close()
         except Exception as exc:
             print(f"[DEBUG] env.close() error: {exc}", file=sys.stderr, flush=True)
-        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
         if _output_file is not None:
             _output_file.close()
             _output_file = None

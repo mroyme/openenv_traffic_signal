@@ -18,9 +18,9 @@ def grade(agent_corridor_time: float, baseline_corridor_time: float) -> float:
         Score in [0.0, 1.0].
     """
     if baseline_corridor_time == 0:
-        return 0.0
+        return 0.001
     score = 1.0 - (agent_corridor_time / baseline_corridor_time)
-    return round(float(np.clip(score, 0.0, 1.0)), 4)
+    return round(float(np.clip(score, 0.001, 0.999)), 4)
 
 
 class CorridorGrader:
