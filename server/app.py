@@ -30,11 +30,13 @@ except Exception as e:  # pragma: no cover
     ) from e
 
 import threading
-from typing import Literal
+from typing import Any, Literal
 
 from models import AgentAction, TrafficAction, TrafficObservation
 from server.traffic_signal_environment import TrafficEnvironment
 
+
+from server.gradio_ui import build_traffic_ui
 
 app = create_app(
     TrafficEnvironment,
@@ -42,6 +44,7 @@ app = create_app(
     TrafficObservation,
     env_name="openenv-traffic-signal",
     max_concurrent_envs=1,  # increase this number to allow more concurrent WebSocket sessions
+    gradio_builder=build_traffic_ui,
 )
 
 # ---------------------------------------------------------------------------
@@ -60,6 +63,13 @@ def _get_env() -> TrafficEnvironment:
     return _env
 
 
+TASK_DIFFICULTY: dict[str, str] = {
+    "corridor_coordination": "easy",
+    "grid_coordination": "medium",
+    "emergency_response": "hard",
+}
+
+
 @app.get("/tasks")
 async def list_tasks():
     """Return all available tasks with metadata."""
@@ -68,12 +78,39 @@ async def list_tasks():
         tasks.append(
             {
                 "id": task_id,
+                "difficulty": TASK_DIFFICULTY.get(task_id, "unknown"),
                 "max_steps": cfg["max_steps"],
                 "emergency": cfg["emergency"],
                 "active_intersections": cfg["active_intersections"],
             }
         )
     return {"tasks": tasks}
+
+
+@app.post("/web/step")
+async def web_step_override(request: dict[str, Any]):
+    """Override web step to handle string-typed nested action fields."""
+    import json as _json
+
+    def _parse(v: Any) -> Any:
+        return _json.loads(v) if isinstance(v, str) else v
+
+    if "action" in request:
+        parsed = _parse(request["action"])
+        action_data = parsed if isinstance(parsed, dict) else {"agent_actions": parsed}
+    elif "agent_actions" in request:
+        action_data = {"agent_actions": _parse(request["agent_actions"])}
+    else:
+        action_data = {k: _parse(v) for k, v in request.items() if k != "metadata"}
+
+    with _env_lock:
+        env = _get_env()
+        action = TrafficAction.model_validate(action_data)
+        obs = env.step(action)
+
+    from openenv.core.env_server.serialization import serialize_observation
+
+    return serialize_observation(obs)
 
 
 @app.get("/grader")
